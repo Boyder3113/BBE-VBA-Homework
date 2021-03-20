@@ -1,0 +1,54 @@
+Sub VBA_HW()
+Dim ticker As Double
+Dim open_price As Double
+Dim close_price As Double
+Dim total_Volume As Double
+Dim percent_change As Double
+Dim vol As Double
+
+For Each ws In Worksheets
+
+'Add the word ticker to the first column header
+ws.Cells(1, 9).Value = "Ticker"
+ws.Cells(1, 10).Value = "Yearly Change"
+ws.Cells(1, 11).Value = "Percentage Change"
+ws.Cells(1, 12).Value = "Total Volume"
+
+ticker = 2
+vol = 0
+
+'Loop through 1st column and get each ticker symbol and open price
+     For i = 2 To ws.Cells(Rows.Count, 1).End(xlUp).Row
+        vol = vol + ws.Cells(i, 7).Value
+      
+        If ws.Cells(i - 1, 1).Value <> ws.Cells(i, 1).Value Then
+            open_price = ws.Cells(i, 3).Value
+            ws.Cells(ticker, 9).Value = ws.Cells(i, 1).Value
+            ws.Cells(ticker, 12).Value = vol
+            ticker = ticker + 1
+            vol = 0
+        End If
+'Get close price for each ticker
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+            close_price = ws.Cells(i, 6).Value
+        End If
+'Calculate Price change and put in column J
+        ws.Cells(ticker - 1, 10).Value = (close_price - open_price)
+'Work around divide by 0 error using if to only calculate % change if open and close price are different
+        If open_price <> closed_price Then
+            percent_change = ((close_price - open_price) / open_price)
+            ws.Cells(ticker - 1, 11).Value = percent_change
+        Else
+            percent_change = 0
+        End If
+'Format cells that hold percentage change value to show as percent "0.00%"
+        ws.Cells(ticker - 1, 11).NumberFormat = "0.00%"
+'Format cells that have a positive change green and cells with a negative change as red
+        If ws.Cells(ticker - 1, 10).Value > 0 Then
+            ws.Cells(ticker - 1, 10).Interior.ColorIndex = 4
+        Else
+            ws.Cells(ticker - 1, 10).Interior.ColorIndex = 3
+        End If
+    Next i
+Next ws
+End Sub
