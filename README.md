@@ -1,2 +1,2 @@
-# BBE-VBA-Homework
-DU Boot Camp VBA Homework
+# Visual Basic Stock Analysis Script
+
